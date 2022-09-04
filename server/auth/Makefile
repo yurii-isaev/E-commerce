@@ -1,2 +1,2 @@
 migrate:
-	migrate -path ./migrations -database 'postgres://postgres:secret@localhost:5432/example?sslmode=disable' up
+	migrate -path ./migrations -database "postgres://postgres:secret@localhost:5432/postgres?sslmode=disable" up

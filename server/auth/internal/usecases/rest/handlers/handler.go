@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"e-commerce/internal/services"
 	"github.com/gin-gonic/gin"
+
+	"e-commerce/internal/services"
 )
 
 type Handler struct {

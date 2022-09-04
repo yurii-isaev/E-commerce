@@ -1,12 +1,18 @@
 package main
 
 import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
+
+	_ "github.com/lib/pq"
+
 	"e-commerce"
 	"e-commerce/internal/services"
 	"e-commerce/internal/usecases/rest/handlers"
 	"e-commerce/repositories"
-	"github.com/spf13/viper"
-	"log"
 )
 
 func main() {
@@ -14,7 +20,24 @@ func main() {
 		log.Fatalf("error initializing configs: %s", err.Error())
 	}
 
-	repo := repositories.NewRepository()
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("error loading env variables: %s", err.Error())
+	}
+
+	db, err := repositories.NewPostgresDB(repositories.Config{
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		Username: viper.GetString("db.username"),
+		DBName:   viper.GetString("db.dbname"),
+		SSLMode:  viper.GetString("db.sslmode"),
+		Password: os.Getenv("DB_PASSWORD"),
+	})
+
+	if err != nil {
+		log.Fatalf("failed to initialize db: %s", err.Error())
+	}
+
+	repo := repositories.NewRepository(db)
 	service := services.NewService(repo)
 	srv := new(server.Server)
 	handlers := handler.NewHandler(service)
