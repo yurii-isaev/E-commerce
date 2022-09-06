@@ -9,10 +9,12 @@ import (
 
 	_ "github.com/lib/pq"
 
+	"e-commerce/internal/storage/configs"
+	"e-commerce/internal/storage/repositories"
+
 	"e-commerce"
 	"e-commerce/internal/services"
 	"e-commerce/internal/usecases/rest/handlers"
-	"e-commerce/repositories"
 )
 
 func main() {
@@ -24,7 +26,7 @@ func main() {
 		log.Fatalf("error loading env variables: %s", err.Error())
 	}
 
-	db, err := repositories.NewPostgresDB(repositories.Config{
+	db, err := configs.NewPostgresDB(configs.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
@@ -42,13 +44,13 @@ func main() {
 	srv := new(server.Server)
 	handlers := handler.NewHandler(service)
 
-	if err := srv.Run(viper.GetString("8000"), handlers.InitRoutes()); err != nil {
+	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		log.Fatalf("error occured while running http server: %s", err.Error())
 	}
 }
 
 func initConfig() error {
 	viper.AddConfigPath("configs")
-	viper.SetConfigName("config")
+	viper.SetConfigName("configs")
 	return viper.ReadInConfig()
 }
