@@ -14,7 +14,7 @@ const (
 	listsItemsTable = "lists_items"
 )
 
-type Config struct {
+type ConfigDB struct {
 	Host     string
 	Port     string
 	Username string
@@ -23,15 +23,15 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
-	// Database connection string
+func NewPostgresDB(cfg ConfigDB) (*sqlx.DB, error) {
+	// Database connection string.
 	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 			cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
 	if err != nil {
 		return nil, err
 	}
 
-	// Connection verification function
+	// Connection verification function.
 	err = db.Ping()
 	if err != nil {
 		return nil, err

@@ -3,20 +3,20 @@ package repositories
 import (
 	"github.com/jmoiron/sqlx"
 
-	"e-commerce/internal/domains"
+	"e-commerce/internal/entities"
 )
 
-type Authorization interface {
-	CreateUser(user domains.User) (string, error)
-	GetUser(username, password string) (domains.User, error)
+type AuthCrudRepository interface {
+	CreateUser(user entities.User) (int, error)
+	ReadUser(username, password string) (entities.User, error)
 }
 
 type Repository struct {
-	Authorization
+	AuthCrudRepository
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Authorization: NewAuthPostgres(db),
+		AuthCrudRepository: NewAuthPostgres(db),
 	}
 }

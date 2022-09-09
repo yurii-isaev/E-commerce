@@ -7,7 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"e-commerce/internal/domains"
+	"e-commerce/internal/entities"
 	"e-commerce/internal/storage/repositories"
 )
 
@@ -23,16 +23,22 @@ type tokenClaims struct {
 }
 
 type AuthService struct {
-	repo repositories.Authorization
+	repository repositories.AuthCrudRepository
 }
 
-func NewAuthService(repo repositories.Authorization) *AuthService {
-	return &AuthService{repo: repo}
+func NewAuthService(repo repositories.AuthCrudRepository) *AuthService {
+	return &AuthService{repository: repo}
 }
 
-func (s *AuthService) CreateUser(user domains.User) (int, error) {
+func (s *AuthService) Registration(user entities.User) (string, error) {
 	user.Password = generatePasswordHash(user.Password)
-	return s.repo.CreateUser(user)
+
+	_, err := s.repository.CreateUser(user)
+	if err != nil {
+		return "User registration failed", nil
+	}
+
+	return "User registration was successful", nil
 }
 
 func generatePasswordHash(password string) string {
@@ -43,7 +49,7 @@ func generatePasswordHash(password string) string {
 }
 
 func (s *AuthService) GenerateToken(username, password string) (string, error) {
-	user, err := s.repo.GetUser(username, generatePasswordHash(password))
+	user, err := s.repository.ReadUser(username, generatePasswordHash(password))
 	if err != nil {
 		return "", err
 	}
