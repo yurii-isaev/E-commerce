@@ -1,4 +1,4 @@
-package dto
+package controllers
 
 import (
 	"log"

@@ -15,13 +15,13 @@ func NewHandler(service *services.Service) *Router {
 }
 
 // InitHTTPEndpoints will setting endpoints routing.
-func (router *Router) InitHTTPEndpoints() *gin.Engine {
+func (r *Router) InitHTTPEndpoints() *gin.Engine {
 	engine := gin.New()
 
-	auth := engine.Group("/auth")
+	auth := engine.Group("/auth", r.userIdentity)
 	{
-		auth.POST("/sign-up", router.SignUp)
-		auth.POST("/sign-in", router.SignIn)
+		auth.POST("/sign-up", r.SignUp)
+		auth.POST("/sign-in", r.SignIn)
 	}
 
 	return engine

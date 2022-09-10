@@ -5,18 +5,19 @@ import (
 	"e-commerce/internal/storage/repositories"
 )
 
-type Authorization interface {
+type Authentication interface {
 	Registration(user entities.User) (string, error)
 	GenerateToken(username, password string) (string, error)
+	ParseToken(token string) (int, error)
 }
 
 type Service struct {
-	Authorization
+	Authentication
 }
 
 // Return common istance on service authorization inplementation.
 func NewService(repo *repositories.Repository) *Service {
 	return &Service{
-		Authorization: NewAuthService(repo.AuthCrudRepository),
+		Authentication: NewAuthService(repo.AuthCrudRepository),
 	}
 }

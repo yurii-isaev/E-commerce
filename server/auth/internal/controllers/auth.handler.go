@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"e-commerce/internal/entities"
-	"e-commerce/internal/usecases/common/dto"
 )
 
 // @Summary SignUp
@@ -20,19 +19,19 @@ import (
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /auth/sign-up [post]
-func (router *Router) SignUp(c *gin.Context) {
+func (r *Router) SignUp(c *gin.Context) {
 	var input entities.User
 
 	// Input validation check.
 	if err := c.BindJSON(&input); err != nil {
-		dto.NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	// Registration result check.
-	response, err := router.service.Registration(input)
+	response, err := r.service.Registration(input)
 	if err != nil {
-		dto.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -52,19 +51,19 @@ func (router *Router) SignUp(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /auth/sign-in [post]
-func (router *Router) SignIn(c *gin.Context) {
+func (r *Router) SignIn(c *gin.Context) {
 	var input entities.Login
 
 	// Input validation check.
 	if err := c.BindJSON(&input); err != nil {
-		dto.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// Token generate result check.
-	token, err := router.service.GenerateToken(input.Username, input.Password)
+	token, err := r.service.GenerateToken(input.Username, input.Password)
 	if err != nil {
-		dto.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
